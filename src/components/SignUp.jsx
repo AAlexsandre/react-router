@@ -1,9 +1,36 @@
-import { React, useContext } from 'react';
+import { React, useContext, useRef, useState } from 'react';
 import { UserContext } from '../context/UserContext';
 
 const SignUp = () => {
 
     const { modalState, toggleModal } = useContext(UserContext);
+    const [validation, setValidation] = useState("");
+
+    const emailRef = useRef();
+    const passwordRef = useRef();
+    const repeatPasswordRef = useRef();
+
+    const handleSignUp = event => {
+        event.preventDefault();
+        console.log(emailRef.current.value, passwordRef.current.value, repeatPasswordRef.current.value);
+
+        if(emailRef.current.value.trim().length === 0){
+            setValidation("Email is required");
+            return
+        }
+        
+        if(passwordRef.current.value.trim().length < 6 ){
+            setValidation("passwordRef is weak");
+            return
+        }
+
+        if(passwordRef.current.value !== repeatPasswordRef.current.value){
+            setValidation("the password not correspond");
+            return
+        }
+
+        console.log("ok, we can send to firebase");
+    }
     return (
         <>
             {modalState.signUp && (
@@ -18,20 +45,20 @@ const SignUp = () => {
                                     <button className="btn-close" onClick={() => { toggleModal("close") }}></button>
                                 </div>
                                 <div className="modal-body">
-                                    <form className="signUpFrom">
+                                    <form className="signUpFrom" onSubmit={handleSignUp}>
                                         <div className="mb-3">
                                             <label htmlFor="signUpEmail" className="form-label">Email:</label>
-                                            <input type="email" id='signUpEmail' name='signUpEmail' className="form-control" required />
+                                            <input type="email" id='signUpEmail' name='signUpEmail' className="form-control" value={"test@test.be"} ref={emailRef} required />
                                         </div>
                                         <div className="mb-3">
                                             <label htmlFor="signUpPassword" className="form-label">Password:</label>
-                                            <input type="password" id='signUpPassword' name='signUpPassword' className="form-control" required />
+                                            <input type="password" id='signUpPassword' name='signUpPassword' className="form-control" ref={passwordRef} required />
                                         </div>
                                         <div className="mb-3">
                                             <label htmlFor="repeatPassword" className="form-label">Repeat password:</label>
-                                            <input type="password" id='repeatPassword' name='repeatPassword' className="form-control" required />
+                                            <input type="password" id='repeatPassword' name='repeatPassword' className="form-control" ref={repeatPasswordRef} required />
                                         </div>
-                                        <p className="text-danger mt-2">Validation</p>
+                                        <p className="text-danger mt-2">{validation}</p>
                                         <button type='submit' className="btn btn-primary w-100">S'incrire</button>
                                     </form>
                                 </div>

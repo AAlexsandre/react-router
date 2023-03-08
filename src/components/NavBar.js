@@ -2,7 +2,7 @@ import { React, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 const NavBar = () => {
-  const { modalState, toggleModal } = useContext(UserContext);
+  const { toggleModal } = useContext(UserContext);
   return (
     <nav className="navbar navbar-light bg-light px-3">
       <Link to="/" className='navbar-brand'>Coucou</Link>
