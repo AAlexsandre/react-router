@@ -6,7 +6,7 @@ import SignUp from './components/SignUp';
 function App() {
   return (
     <>
-    <SignUp />
+      <SignUp />
       <NavBar />
       <Routes>
         <Route path='/' element={<Home />} />
