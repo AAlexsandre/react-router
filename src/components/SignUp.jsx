@@ -1,35 +1,47 @@
 import { React, useContext, useRef, useState } from 'react';
 import { UserContext } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
 
-    const { modalState, toggleModal } = useContext(UserContext);
+    const { modalState, toggleModal, signUp } = useContext(UserContext);
     const [validation, setValidation] = useState("");
 
     const emailRef = useRef();
     const passwordRef = useRef();
     const repeatPasswordRef = useRef();
+    const formRef = useRef();
+    const navigate = useNavigate();
 
-    const handleSignUp = event => {
+    const handleSignUp = async (event) => {
         event.preventDefault();
         console.log(emailRef.current.value, passwordRef.current.value, repeatPasswordRef.current.value);
 
-        if(emailRef.current.value.trim().length === 0){
+        if (emailRef.current.value.trim().length === 0) {
             setValidation("Email is required");
             return
         }
-        
-        if(passwordRef.current.value.trim().length < 6 ){
+
+        if (passwordRef.current.value.trim().length < 6) {
             setValidation("passwordRef is weak");
             return
         }
 
-        if(passwordRef.current.value !== repeatPasswordRef.current.value){
+        if (passwordRef.current.value !== repeatPasswordRef.current.value) {
             setValidation("the password not correspond");
             return
         }
 
-        console.log("ok, we can send to firebase");
+        try {
+            const result = await signUp(emailRef.current.value, passwordRef.current.value);
+            setValidation('');
+            toggleModal("close");
+            navigate("/contact");
+        } catch (error) {
+            if (error.code == "auth/email-already-in-use") {
+                setValidation("You are already subscribe");
+            }
+        }
     }
     return (
         <>
@@ -45,10 +57,10 @@ const SignUp = () => {
                                     <button className="btn-close" onClick={() => { toggleModal("close") }}></button>
                                 </div>
                                 <div className="modal-body">
-                                    <form className="signUpFrom" onSubmit={handleSignUp}>
+                                    <form ref={formRef} className="signUpFrom" onSubmit={handleSignUp}>
                                         <div className="mb-3">
                                             <label htmlFor="signUpEmail" className="form-label">Email:</label>
-                                            <input type="email" id='signUpEmail' name='signUpEmail' className="form-control" value={"test@test.be"} ref={emailRef} required />
+                                            <input type="email" id='signUpEmail' name='signUpEmail' className="form-control" ref={emailRef} required />
                                         </div>
                                         <div className="mb-3">
                                             <label htmlFor="signUpPassword" className="form-label">Password:</label>
